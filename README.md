@@ -26,10 +26,10 @@ git clone https://github.com/ArminHaberl/install_bench.git
 ```
 ## STEP 4 Run the script and follow the instructions during the installation
 
-'''
+```
 cd install_bench
 python3 install_bench.py
-'''
+```
 
 
 
