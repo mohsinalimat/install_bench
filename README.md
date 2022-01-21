@@ -10,7 +10,7 @@ I assume, that you know how to do that :D
 ## STEP 2 Install git
 
 ```
-apt-get update && apt-get install git -y
+apt-get update && apt-get install git -y -qq
 ```
 
 ## STEP 3 Download the installation script
