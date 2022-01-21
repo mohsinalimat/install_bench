@@ -52,7 +52,7 @@ def main():
     os.system(f'export DEBIAN_FRONTEND="noninteractive"')
     os.system(f'debconf-set-selections <<< "mariadb-server-10.3 mysql-server/root_password password {password}"')
     os.system(f'debconf-set-selections <<< "mariadb-server-10.3 mysql-server/root_password_again password {password}"')
-    os.system(f"apt -y -qq install mariadb-server")
+    os.system(f"apt -y install mariadb-server")
     os.system(f"apt-get -y -qq install libmysqlclient-dev")
     os.system(f"echo '[mysqld]' >> /etc/mysql/my.cnf")
     os.system(f"echo 'character-set-client-handshake = FALSE' >> /etc/mysql/my.cnf")
@@ -74,6 +74,7 @@ def main():
     #os.system(f"echo {password} | sudo -S -H pip3 install frappe-bench")
     os.system(f"tset")
     os.system(f"cd /home/{username}/")
+    os.system(f"sudo -u {username} pip3 install frappe-bench")
     os.system(f'su {username} -c "bench init frappe-bench --frappe-branch version-13"')
     os.system(f"cd /home/{username}/frappe-bench/")
     os.system(f'su {username} -c "bench new-site {sitename}"')
@@ -82,7 +83,7 @@ def main():
     os.system(f'sudo -u {username} bench setup production {username}')
     os.system(f'add-apt-repository ppa:certbot/certbot')
     os.system(f"apt update")
-    os.system(f"apt -y -qq install python-certbot-nginx")    
+    os.system(f"apt -y install python-certbot-nginx")    
     os.system(f"certbot --nginx -d {sitename}")
 
 
