@@ -9,17 +9,19 @@ import os
 def main():
     # setup user
 
+    name_of_user = str(input("Hello there! What is your name?: "))
     username = str(input("Choose your username for your system (e.g. erp_base, etc.): "))
     while True:
-        password = str(input(f"Choose a password for {username} : "))
-        password_check = str(input(f"Repeat password for {username} : "))
-        if password == password_check:
+        some_pswd = str(input(f"Choose a password for {username} : "))
+        some_pswd_check = str(input(f"Repeat password for {username} : "))
+        if some_pswd == some_pswd_check:
             break
         else:
             print("Passwords did not match! Please retry entering the password!")
             print("\n")       
     
-    os.system(f"useradd -p $(openssl passwd -crypt {password}) {username}")
+    os.system(f'adduser --quiet --disabled-password --shell /bin/bash --home /home/{username} --gecos "{name_of_user}" {username}')
+    os.system(f'echo "{username}:{some_pswd}" | chpasswd')
     os.system(f"usermod -aG sudo {username}")
 
     sitename = str(input("Which domain-name would you like for your bench-manager site? (e.g., bench.example.com): "))
@@ -45,8 +47,8 @@ def main():
     os.system(f"add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://ftp.icm.edu.pl/pub/unix/database/mariadb/repo/10.3/ubuntu focal main'")
     os.system(f"apt update")
     os.system(f'export DEBIAN_FRONTEND="noninteractive"')
-    os.system(f'debconf-set-selections <<< "mariadb-server mysql-server/root_password password {password}"')
-    os.system(f'sudo debconf-set-selections <<< "mariadb-server mysql-server/root_password_again password {password}"')
+    os.system(f'debconf-set-selections <<< "mariadb-server-10.3 mysql-server/root_password password {some_pswd}"')
+    os.system(f'debconf-set-selections <<< "mariadb-server-10.3 mysql-server/root_password_again password {some_pswd}"')
     os.system(f"apt -y install mariadb-server")
     os.system(f"apt-get -y install libmysqlclient-dev")
     os.system(f"echo '[mysqld]' >> /etc/mysql/my.cnf")
@@ -66,7 +68,7 @@ def main():
     os.system(f"apt-get -y install xvfb libfontconfig wkhtmltopdf")
 
     os.system(f"su - {username}")
-    os.system(f"echo {password} | sudo -S -H pip3 install frappe-bench")
+    os.system(f"echo {some_pswd} | sudo -S -H pip3 install frappe-bench")
     os.system(f"tset")
     os.system(f"bench init frappe-bench --frappe-branch version-13")
     os.system(f"cd frappe-bench/")
@@ -75,12 +77,12 @@ def main():
     os.system(f"bench get-app bench_manager --branch version-13")
     os.system(f"bench --site {sitename} install-app bench_manager")
     os.system(f"bench start")        
-    os.system(f"echo {password} | sudo -S bench setup production {username}")
+    os.system(f"echo {some_pswd} | sudo -S bench setup production {username}")
 
-    os.system(f"echo {password} | sudo -S add-apt-repository ppa:certbot/certbot")
-    os.system(f"echo {password} | sudo -S apt update")
-    os.system(f"echo {password} | sudo -S apt -y install python-certbot-nginx")    
-    os.system(f"echo {password} | sudo -S certbot --nginx -d {sitename}")
+    os.system(f"echo {some_pswd} | sudo -S add-apt-repository ppa:certbot/certbot")
+    os.system(f"echo {some_pswd} | sudo -S apt update")
+    os.system(f"echo {some_pswd} | sudo -S apt -y install python-certbot-nginx")    
+    os.system(f"echo {some_pswd} | sudo -S certbot --nginx -d {sitename}")
 
 
 
