@@ -38,7 +38,7 @@ def main():
 
 
     #install Pre-requisites
-
+    os.system(f"apt-get -y install python3-dev")
     os.system(f"apt-get -y install python3-setuptools python3-pip")
     os.system(f"apt-get -y install virtualenv")
     os.system(f"apt-get -y install software-properties-common")

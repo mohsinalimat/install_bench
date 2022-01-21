@@ -13,13 +13,7 @@ I assume, that you know how to do that :D
 apt-get update && apt-get install git -y
 ```
 
-## STEP 3 Install python
-
-```
-apt-get install python3-dev
-```
-
-## STEP 4 Download the installation script
+## STEP 3 Download the installation script
 
 ```
 git clone https://github.com/ArminHaberl/install_bench.git
@@ -28,6 +22,9 @@ git clone https://github.com/ArminHaberl/install_bench.git
 
 ```
 cd install_bench
+```
+
+```
 python3 install_bench.py
 ```
 
