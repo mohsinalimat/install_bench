@@ -10,8 +10,8 @@ from getpass import getpass
 def main():
     # setup user
 
-    name_of_user = str(input("Hello there! What is your name?: "))
-    username = str(input("Choose your username for your system (e.g. erp_base, etc.): "))
+    name_of_user = input("Hello there! What is your name?: ")
+    username = input("Choose your username for your system (e.g. erp_base, etc.): ")
     while True:
         password = getpass(f'Choose a password for {username}: ')
         password_check = getpass(f"Repeat password for {username} : ")
