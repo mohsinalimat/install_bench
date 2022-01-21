@@ -5,6 +5,7 @@ This script installs frappe bench for you, creates a site with bench manager, an
 """
 
 import os
+import time
 from getpass import getpass
 
 def main():
@@ -22,6 +23,7 @@ def main():
             print("\n")       
     
     os.popen(f'adduser --quiet --disabled-password --shell /bin/bash --home /home/{username} --gecos "{name_of_user}" {username}')
+    time.sleep(1)
     os.popen(f'echo "{username}:{password}" | chpasswd')
     os.popen(f"usermod -aG sudo {username}")
 
