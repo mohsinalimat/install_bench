@@ -7,6 +7,7 @@ This script installs frappe bench for you, creates a site with bench manager, an
 import os
 import time
 from getpass import getpass
+from shlex import split as split_command
 
 def main():
     # setup user
