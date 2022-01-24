@@ -4,10 +4,13 @@
 This script installs frappe bench for you, creates a site with bench manager, and sets up production.
 """
 
+import os
 import time
 from getpass import getpass
 import shlex
 import subprocess
+import pwd
+import sys
 
 
 def add_user():
@@ -45,6 +48,31 @@ def run_command(command):
     split_command = shlex.split(command)
     subprocess.check_call(split_command)
 
+def run_user_commands(user_name, user_commands):
+    cwd = os.getcwd()
+    pw_record = pwd.getpwnam(user_name)
+    user_name      = pw_record.pw_name
+    user_home_dir  = pw_record.pw_dir
+    user_uid       = pw_record.pw_uid
+    user_gid       = pw_record.pw_gid
+    env = os.environ.copy()
+    env[ 'HOME'     ]  = user_home_dir
+    env[ 'LOGNAME'  ]  = user_name
+    env[ 'PWD'      ]  = cwd
+    env[ 'USER'     ]  = user_name
+    
+    for command in user_commands:
+        split_command = shlex.split(command)
+        subprocess.check_call(args=split_command,preexec_fn=demote(user_uid, user_gid), cwd=cwd, env=env)
+
+
+def demote(user_uid, user_gid):
+    def result():
+        os.setgid(user_gid)
+        os.setuid(user_uid)
+    return result
+
+
 def main():
 
     username, password = add_user()
@@ -76,7 +104,8 @@ def main():
                     f"apt-get -y install xvfb libfontconfig wkhtmltopdf",
                     f"add-apt-repository ppa:certbot/certbot",
                     f"apt update",
-                    f"apt -y install python-certbot-nginx"
+                    f"apt -y install python-certbot-nginx",
+                    f"tset"
                     ]
     
     for command in root_commands:
@@ -84,13 +113,14 @@ def main():
 
     user_commands = [f"sudo pip3 install frappe-bench",
                     f"bench init frappe-bench --frappe-branch version-13",
-                    f"cd /home/{username}/frappe-bench/",
-                    f"bench new-site {sitename}",
-                    f"bench get-app bench_manager --branch version-13",
-                    f"bench --site {sitename} install-app bench_manager",
-                    f"bench setup production {username}",
+                    f"cd /home/{username}/frappe-bench/ && bench new-site {sitename}",
+                    f"cd /home/{username}/frappe-bench/ && bench get-app bench_manager --branch version-13",
+                    f"cd /home/{username}/frappe-bench/ && bench --site {sitename} install-app bench_manager",
+                    f"cd /home/{username}/frappe-bench/ && bench setup production {username}",
                     f"certbot --nginx -d {sitename}"
                     ]
+    
+    run_user_commands(user_commands)
 
 
 if __name__ == '__main__':   
