@@ -98,7 +98,7 @@ def main():
                     f"service mysql restart",
                     f"apt-get -y install redis-server",
                     f"apt-get -y install curl",
-                    f"curl -sL https://deb.nodesource.com/setup_14.x | bash -",
+                    f"curl -fsSL https://deb.nodesource.com/setup_14.x | bash -",
                     f"apt-get -y install nodejs",
                     f"npm install -g yarn",
                     f"apt-get -y install xvfb libfontconfig wkhtmltopdf",
