@@ -44,9 +44,21 @@ def set_mysql():
     return mysql_password
 
 
-def run_command(command):
-    split_command = shlex.split(command)
-    subprocess.check_call(split_command)
+def run_command(command, preexec_fn = None, cwd = None, env = None):
+    if "|" in command:
+        run_pipe_command(command)
+    else:
+        split_command = shlex.split(command)
+        subprocess.check_call(split_command, preexec_fn=preexec_fn, cwd=cwd, env=env)
+
+def run_pipe_command(command, preexec_fn = None, cwd = None, env = None):
+    cmd_part_1 = str(command).split(sep=" | ")[0]
+    cmd_part_2 = str(command).split(sep=" | ")[1]
+    split_cmd_1 = shlex(cmd_part_1)
+    split_cmd_2 = shlex(cmd_part_2)
+    run_process = subprocess.check_call(split_cmd_1, stdout=subprocess.PIPE, preexec_fn=preexec_fn, cwd=cwd, env=env)
+    subprocess.check_call(split_cmd_2, stdin=run_process.stdout, preexec_fn=preexec_fn, cwd=cwd, env=env)
+    run_process.wait()
 
 def run_user_commands(user_name, user_commands):
     cwd = os.getcwd()
@@ -62,8 +74,7 @@ def run_user_commands(user_name, user_commands):
     env[ 'USER'     ]  = user_name
     
     for command in user_commands:
-        split_command = shlex.split(command)
-        subprocess.check_call(args=split_command,preexec_fn=demote(user_uid, user_gid), cwd=cwd, env=env)
+        run_command(command,preexec_fn=demote(user_uid, user_gid),cwd=cwd,env=env)
 
 
 def demote(user_uid, user_gid):
@@ -88,19 +99,17 @@ def main():
                     f"apt update",
                     f"apt -y install mariadb-server",
                     f"apt-get -y install libmysqlclient-dev",
-                    f"echo '[mysqld]' >> /etc/mysql/my.cnf",
-                    f"echo 'character-set-client-handshake = FALSE' >> /etc/mysql/my.cnf",
-                    f"echo 'character-set-server = utf8mb4' >> /etc/mysql/my.cnf",
-                    f"echo 'collation-server = utf8mb4_unicode_ci' >> /etc/mysql/my.cnf",
-                    f"echo '\n' >> /etc/mysql/my.cnf",
-                    f"echo '[mysql]' >> /etc/mysql/my.cnf",
-                    f"echo 'default-character-set = utf8mb4' >> /etc/mysql/my.cnf",
+                    f"echo '[mysqld]' | tee -a /etc/mysql/my.cnf",
+                    f"echo 'character-set-client-handshake = FALSE' | tee -a /etc/mysql/my.cnf",
+                    f"echo 'character-set-server = utf8mb4' | tee -a /etc/mysql/my.cnf",
+                    f"echo 'collation-server = utf8mb4_unicode_ci' | tee -a /etc/mysql/my.cnf",
+                    f"echo '\n' | tee -a /etc/mysql/my.cnf",
+                    f"echo '[mysql]' | tee -a /etc/mysql/my.cnf",
+                    f"echo 'default-character-set = utf8mb4' | tee -a /etc/mysql/my.cnf",
                     f"service mysql restart",
                     f"apt-get -y install redis-server",
                     f"apt-get -y install curl",
-                    f"curl -fsSL https://deb.nodesource.com/setup_14.x >> install_node.sh",
-                    f"chmod +x install_node.sh"
-                    f"sh install_node.sh"
+                    f"curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -",
                     f"apt-get -y install nodejs",
                     f"npm install -g yarn",
                     f"apt-get -y install xvfb libfontconfig wkhtmltopdf",
