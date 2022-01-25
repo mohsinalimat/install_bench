@@ -57,7 +57,7 @@ def run_pipe_command(command, preexec_fn = None, cwd = None, env = None):
     split_cmd_1 = shlex.split(cmd_part_1)
     split_cmd_2 = shlex.split(cmd_part_2)
     run_process = subprocess.check_call(split_cmd_1, stdout=subprocess.PIPE, preexec_fn=preexec_fn, cwd=cwd, env=env)
-    subprocess.check_call(split_cmd_2, stdin=run_process.stdout, preexec_fn=preexec_fn, cwd=cwd, env=env)
+    pipe_process= subprocess.check_call(split_cmd_2, stdin=run_process.stdout, preexec_fn=preexec_fn, cwd=cwd, env=env)
     run_process.wait()
 
 def run_user_commands(user_name, user_commands):
