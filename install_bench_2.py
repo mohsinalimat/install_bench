@@ -122,7 +122,7 @@ def main():
     for command in root_commands:
         run_command(command)
 
-    user_commands = [f"sudo pip3 install frappe-bench",
+    user_commands = [f"echo {password} | sudo -S pip3 install frappe-bench",
                     f"bench init frappe-bench --frappe-branch version-13",
                     f"cd /home/{username}/frappe-bench/ && bench new-site {sitename}",
                     f"cd /home/{username}/frappe-bench/ && bench get-app bench_manager --branch version-13",
