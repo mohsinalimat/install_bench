@@ -52,10 +52,10 @@ def run_command(command, preexec_fn = None, cwd = None, env = None):
         subprocess.check_call(split_command, preexec_fn=preexec_fn, cwd=cwd, env=env)
 
 def run_pipe_command(command, preexec_fn = None, cwd = None, env = None):
-    cmd_part_1 = str(str(command).split(sep=" | ")[0])
-    cmd_part_2 = str(str(command).split(sep=" | ")[1])
-    split_cmd_1 = shlex(cmd_part_1)
-    split_cmd_2 = shlex(cmd_part_2)
+    cmd_part_1 = str(command).split(sep=" | ")[0]
+    cmd_part_2 = str(command).split(sep=" | ")[1]
+    split_cmd_1 = shlex.split(cmd_part_1)
+    split_cmd_2 = shlex.split(cmd_part_2)
     run_process = subprocess.check_call(split_cmd_1, stdout=subprocess.PIPE, preexec_fn=preexec_fn, cwd=cwd, env=env)
     subprocess.check_call(split_cmd_2, stdin=run_process.stdout, preexec_fn=preexec_fn, cwd=cwd, env=env)
     run_process.wait()
