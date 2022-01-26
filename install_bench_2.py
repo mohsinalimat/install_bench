@@ -25,10 +25,10 @@ def add_user():
             print("Passwords did not match! Please retry entering the password!")
             print("\n")       
     
-    run_command(f'useradd -m {username}')
+    os.system(f'useradd -m {username}')
     time.sleep(0.5)
-    run_command(f"echo {password} | passwd {username} --stdin")
-    run_command(f"usermod -aG sudo {username}")
+    os.system(f"echo {password} | passwd {username} --stdin")
+    os.system(f"usermod -aG sudo {username}")
     return username, password
 
 
