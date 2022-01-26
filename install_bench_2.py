@@ -25,9 +25,9 @@ def add_user():
             print("Passwords did not match! Please retry entering the password!")
             print("\n")       
     
-    run_command(f'adduser --quiet --disabled-password --shell /bin/bash --home /home/{username} --gecos "{name_of_user}" {username}')
-    time.sleep(1)
-    run_command(f'echo "{username}:{password}" | chpasswd')
+    run_command(f'useradd -m {username}')
+    time.sleep(0.5)
+    run_command(f"echo {password} | passwd {username} --stdin")
     run_command(f"usermod -aG sudo {username}")
     return username, password
 
@@ -87,7 +87,6 @@ def demote(user_uid, user_gid):
 def main():
 
     username, password = add_user()
-    mysql_password = set_mysql()
     sitename = input("Which domain-name would you like for your bench-manager site? (e.g., bench.example.com): ")
 
     root_commands = [f"apt-get -y install python3-dev",
